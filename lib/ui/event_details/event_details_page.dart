@@ -178,7 +178,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return null;
   }
 
-  Widget _buildActorScroller() =>
+  Widget _buildActorScroller() => 
       widget.event.actors.isNotEmpty ? new ActorScroller(widget.event) : null;
 
   Widget _buildEventBackdrop() {

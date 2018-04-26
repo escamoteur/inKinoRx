@@ -1,27 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
+
 import 'package:inkinoRx/assets.dart';
 import 'package:inkinoRx/data/actor.dart';
 import 'package:inkinoRx/data/event.dart';
 
 
 class ActorScroller extends StatelessWidget {
-  ActorScroller(this.event);
   final Event event;
+  final List<Actor> actors;
 
+  ActorScroller(this.event): actors = event.actors;
+   
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<AppState, List<Actor>>(
-      onInit: (store) => store.dispatch(new FetchActorAvatarsAction(event)),
-      converter: (store) => actorsForEventSelector(store.state, event),
-      builder: (_, actors) => new ActorScrollerContent(actors),
+    return new Container(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: new Text(
+              'Cast',
+              style: new TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          new Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: new SizedBox.fromSize(
+              size: new Size.fromHeight(110.0),
+              child: _buildActorList(context),
+            ),
+          ),
+        ],
+      ),
     );
   }
-}
 
-class ActorScrollerContent extends StatelessWidget {
-  ActorScrollerContent(this.actors);
-  final List<Actor> actors;
 
   Widget _buildActorList(BuildContext context) {
     return new ListView.builder(
@@ -91,32 +109,4 @@ class ActorScrollerContent extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: new Text(
-              'Cast',
-              style: new TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          new Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: new SizedBox.fromSize(
-              size: new Size.fromHeight(110.0),
-              child: _buildActorList(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

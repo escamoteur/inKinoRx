@@ -86,6 +86,17 @@ class MainPageModel {
   }
 
  
+ Event getEventForShow(Show show)
+ {
+    var currentEvents = updateEventsCommand.lastResult;
+    if (currentEvents == null)
+    { 
+      return null;
+    }
+    return currentEvents.where( (event) => event.id == show.eventId).first;
+ }
+
+ 
   Theater _getDefaultTheater(List<Theater> allTheaters) {
     var persistedTheaterId = _preferences.getString(kDefaultTheaterId);
 

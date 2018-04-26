@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:inkinoRx/data/show.dart';
+import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/ui/event_details/event_details_page.dart';
 
 import 'package:intl/intl.dart';
 
@@ -16,14 +18,15 @@ class ShowtimeListTile extends StatelessWidget {
   final bool useAlternateBackground;
 
   void _navigateToEventDetails(BuildContext context) {
-//    var event = eventForShowSelector(store.state, show);
-//
-//    Navigator.push(
-//      context,
-//      new MaterialPageRoute(
-//        builder: (_) => new EventDetailsPage(event, show: show),
-//      ),
-//    );
+      var event =  ModelProvider.of(context).getEventForShow(show);
+      if (event != null)
+       {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (_) => new EventDetailsPage(event, show: show),
+            ),);
+       }
   }
 
   Widget _buildShowtimesInfo() {

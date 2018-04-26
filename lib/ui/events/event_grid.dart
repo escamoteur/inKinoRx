@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 
 import 'package:inkinoRx/ui/common/info_message_view.dart';
-//import 'package:inkinoRx/ui/event_details/event_details_page.dart';
+import 'package:inkinoRx/ui/event_details/event_details_page.dart';
 import 'package:inkinoRx/ui/events/event_grid_item.dart';
 import 'package:meta/meta.dart';
 
@@ -19,12 +19,12 @@ class EventGrid extends StatelessWidget {
   final VoidCallback onReloadCallback;
 
   void _openEventDetails(BuildContext context, Event event) {
-//    Navigator.push(
-//      context,
-//      new MaterialPageRoute(
-//        builder: (_) => new EventDetailsPage(event),
-//      ),
-//    );
+    Navigator.push(
+      context,
+      new MaterialPageRoute(
+        builder: (_) => new EventDetailsPage(event),
+      ),
+    );
   }
 
   Widget _buildContent(BuildContext context) {
