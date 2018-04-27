@@ -106,6 +106,7 @@ class _MainPageState extends State<MainPage>
   }
 
   void _updateSearchQuery(String newQuery) {
+      ModelProvider.of(context).updateSearchStringCommand(newQuery);    
   }
 
   List<Widget> _buildActions() {
@@ -161,9 +162,9 @@ class _MainPageState extends State<MainPage>
       body: new TabBarView(
         controller: _controller,
         children: <Widget>[
-          new EventsPage(ModelProvider.of(context).updateEventsCommand),
+          new EventsPage(EvenListTypes.InTheater),
           new ShowtimesPage(),
-          new EventsPage(ModelProvider.of(context).updateUpcomingEventsCommand),
+          new EventsPage(EvenListTypes.Upcomming),
         ],
       ),
     );

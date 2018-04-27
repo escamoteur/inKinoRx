@@ -18,11 +18,7 @@ class ActorScroller extends StatelessWidget {
     new StreamBuilder(initialData: event.actors, stream: ModelProvider.of(context).getActorsForEventCommand.results,
         builder: (context, AsyncSnapshot<List<Actor>> snapshot){
         var actors = snapshot.hasData && (snapshot.data != null) ? snapshot.data : new List<Actor>(); // just to be save
-        print("Reseived new actors: ${snapshot.data[0].avatarUrl}"); 
-        if (snapshot.data[0].avatarUrl != null)
-        {
-          print(snapshot.data[0].avatarUrl);
-        } 
+
     return Container(
       padding: const EdgeInsets.only(top: 16.0),
       child: new Column(

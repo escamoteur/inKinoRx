@@ -10,6 +10,7 @@ import 'package:inkinoRx/services/finnkino_api.dart';
 import 'package:inkinoRx/services/tmdb_api.dart';
 import 'package:inkinoRx/utils/clock.dart';
 import 'package:rx_command/rx_command.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +30,7 @@ class MainPageModel {
   RxCommand<Null,List<Event>> updateUpcomingEventsCommand;
   RxCommand<DateTime,List<Show>> updateShowTimesCommand;
   RxCommand<Event,List<Actor>> getActorsForEventCommand;
+  RxCommand<String,String> updateSearchStringCommand;
   
   List<Theater> allTheaters;
   Theater defaultTheater;
@@ -36,17 +38,50 @@ class MainPageModel {
   List<DateTime> showDates;
   DateTime selectedDate;
 
-  
+  // because Streams in Dart can only be single listened and Streambuilder always subscribe new, we have to create a new instance everytime 
+  // which is only possible by using a function call or getter.
+  Observable<CommandResult<List<Event>>> get inTheaterEvents {
+    return Observable.combineLatest2<CommandResult<List<Event>>,String,CommandResult<List<Event>>>
+                                    (updateEventsCommand, updateSearchStringCommand.results.startWith(""), 
+                                        (result, s)
+                                            {
+                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting) ;
+                                            });}
+
+  Observable<CommandResult<List<Event>>> get upcommingEvents {
+    return Observable.combineLatest2<CommandResult<List<Event>>,String,CommandResult<List<Event>>>
+                                    (updateUpcomingEventsCommand, updateSearchStringCommand.results.startWith(""), 
+                                        (result, s)
+                                            {
+                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting) ;
+                                            });}
+
+  Observable<CommandResult<List<Show>>> get showsToDisplay {
+    return Observable.combineLatest2<CommandResult<List<Show>>,String,CommandResult<List<Show>>>
+                                    (updateShowTimesCommand, updateSearchStringCommand.results.startWith(""), 
+                                        (result, s)
+                                            {
+                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting) ;
+                                            });}
+
+                                          
 
   MainPageModel(this._bundle,this._preferences,this._tmdbApi,this._finnkinoApi)
   {
-     changedDefaultTheatherCommand = RxCommand.createSync3<Theater,Theater>((x)=>x);
+     changedDefaultTheatherCommand = RxCommand.createSync3<Theater,Theater>((newTheater) => newTheater);
+
+     // We handle this by listening to the command and not in the commands function iself 
+     // because so others can listen to theater changes too
      changedDefaultTheatherCommand
        .results.listen((newDefaultTheater) {
           defaultTheater = newDefaultTheater;
           updateEventsCommand.execute();
           updateUpcomingEventsCommand.execute();
           updateShowTimesCommand.execute(showDates[0]);
+          _saveDefaultTheater(newDefaultTheater);
        });
          
 
@@ -60,12 +95,30 @@ class MainPageModel {
 
     getActorsForEventCommand = RxCommand.createAsync3(_getActorsForEvent);
 
+    updateSearchStringCommand = RxCommand.createSync3((s)=>s);
 
+    
+
+  
   }
+
+  Future init() async {
+    await _bundle.loadString(OtherAssets.preloadedTheaters)
+              .then( (theaterXml) => Theater.parseAll(theaterXml))
+              .then( (theaters) {
+                allTheaters = theaters;
+                changedDefaultTheatherCommand.execute(_getDefaultTheater(theaters));
+              });
+
+    var now = Clock.getCurrentTime();
+    showDates = new List.generate(7,(index) => now.add(new Duration(days: index)),);
+  }
+
+
 
   Future<List<Actor>> _getActorsForEvent(event) async { 
   
-    print("getactors called")
+    print("getactors called");
     try {
       var actorsWithAvatars = await _tmdbApi.findAvatarsForActors(
         event,
@@ -100,19 +153,6 @@ class MainPageModel {
                                   return shows.where((show) => show.start.isAfter(now)).toList();
                                 }
 
-  Future init() async {
-    await _bundle.loadString(OtherAssets.preloadedTheaters)
-              .then( (theaterXml) => Theater.parseAll(theaterXml))
-              .then( (theaters) {
-                allTheaters = theaters;
-                changedDefaultTheatherCommand.execute(_getDefaultTheater(theaters));
-              });
-
-    var now = Clock.getCurrentTime();
-    showDates = new List.generate(7,(index) => now.add(new Duration(days: index)),);
-
-
-  }
 
  
  Event getEventForShow(Show show)
@@ -137,6 +177,12 @@ class MainPageModel {
 
     return allTheaters.first;
   }
+
+  _saveDefaultTheater(Theater theater)
+  {
+    _preferences.setString(kDefaultTheaterId, theater.id);
+  }
+
   
 }
 

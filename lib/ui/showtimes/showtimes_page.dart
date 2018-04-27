@@ -16,7 +16,7 @@ class ShowtimesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return  StreamBuilder(stream: ModelProvider.of(context).updateShowTimesCommand,
+    return  StreamBuilder(stream: ModelProvider.of(context).showsToDisplay,
                 builder: (BuildContext context, AsyncSnapshot<CommandResult<List<Show>>> snapshot)
                 {
                     if (snapshot.hasData)

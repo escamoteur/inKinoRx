@@ -11,15 +11,21 @@ import 'package:inkinoRx/ui/common/platform_adaptive_progress_indicator.dart';
 import 'package:inkinoRx/ui/events/event_grid.dart';
 import 'package:rx_command/rx_command.dart';
 
-class EventsPage extends StatelessWidget {
-  final Stream<CommandResult<List<Event>>> source;
+typedef StreamProvider = Stream<CommandResult<List<Event>>> Function();
 
-  EventsPage(this.source);
+enum EvenListTypes {InTheater, Upcomming}
+
+class EventsPage extends StatelessWidget {
+  final EvenListTypes listType;
+
+  EventsPage(this.listType);
 
   @override
   Widget build(BuildContext context) {
-    
-    return StreamBuilder(stream: source,
+    var model = ModelProvider.of(context);
+
+    Stream<CommandResult<List<Event>>> stream = listType == EvenListTypes.InTheater ? model.inTheaterEvents : model.upcommingEvents;
+    return StreamBuilder(stream: stream,
                         builder: (BuildContext context, AsyncSnapshot<CommandResult<List<Event>>> snapshot)
                         {
                            if (snapshot.hasData)
