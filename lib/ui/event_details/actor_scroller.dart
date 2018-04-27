@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/assets.dart';
 import 'package:inkinoRx/data/actor.dart';
 import 'package:inkinoRx/data/event.dart';
+import 'package:inkinoRx/model_provider.dart';
 
 
 class ActorScroller extends StatelessWidget {
@@ -13,7 +14,16 @@ class ActorScroller extends StatelessWidget {
    
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return 
+    new StreamBuilder(initialData: event.actors, stream: ModelProvider.of(context).getActorsForEventCommand.results,
+        builder: (context, AsyncSnapshot<List<Actor>> snapshot){
+        var actors = snapshot.hasData && (snapshot.data != null) ? snapshot.data : new List<Actor>(); // just to be save
+        print("Reseived new actors: ${snapshot.data[0].avatarUrl}"); 
+        if (snapshot.data[0].avatarUrl != null)
+        {
+          print(snapshot.data[0].avatarUrl);
+        } 
+    return Container(
       padding: const EdgeInsets.only(top: 16.0),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,16 +42,17 @@ class ActorScroller extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0),
             child: new SizedBox.fromSize(
               size: new Size.fromHeight(110.0),
-              child: _buildActorList(context),
+              child: _buildActorList(context, actors),
             ),
           ),
         ],
       ),
     );
+  });
   }
 
 
-  Widget _buildActorList(BuildContext context) {
+  Widget _buildActorList(BuildContext context, actors) {
     return new ListView.builder(
       padding: const EdgeInsets.only(left: 16.0),
       scrollDirection: Axis.horizontal,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:inkinoRx/assets.dart';
+import 'package:inkinoRx/data/actor.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/data/theater.dart';
@@ -10,8 +11,6 @@ import 'package:inkinoRx/services/tmdb_api.dart';
 import 'package:inkinoRx/utils/clock.dart';
 import 'package:rx_command/rx_command.dart';
 
-
-import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -29,6 +28,7 @@ class MainPageModel {
   RxCommand<Null,List<Event>> updateEventsCommand;
   RxCommand<Null,List<Event>> updateUpcomingEventsCommand;
   RxCommand<DateTime,List<Show>> updateShowTimesCommand;
+  RxCommand<Event,List<Actor>> getActorsForEventCommand;
   
   List<Theater> allTheaters;
   Theater defaultTheater;
@@ -56,20 +56,49 @@ class MainPageModel {
     updateUpcomingEventsCommand = RxCommand.createAsync2<List<Event>>( 
                                         () async => _finnkinoApi.getUpcomingEvents());                                                                             
 
+    updateShowTimesCommand = RxCommand.createAsync3<DateTime,List<Show>>( _updateShowTimes, emitLastResult: true);
+
+    getActorsForEventCommand = RxCommand.createAsync3(_getActorsForEvent);
 
 
-    updateShowTimesCommand = RxCommand.createAsync3<DateTime,List<Show>>( (date) async 
-                                  {
-                                    var now = Clock.getCurrentTime();
-                                    date == date ?? now;
-                                    var shows = await _finnkinoApi.getSchedule(defaultTheater, date);
-
-                                    selectedDate = date;    
-                                    // Return only show times that haven't started yet.
-                                    return shows.where((show) => show.start.isAfter(now)).toList();
-                                  }, emitLastResult: true);
-                                  
   }
+
+  Future<List<Actor>> _getActorsForEvent(event) async { 
+  
+    print("getactors called")
+    try {
+      var actorsWithAvatars = await _tmdbApi.findAvatarsForActors(
+        event,
+        event.actors,
+      );
+  
+      // TMDB API might have a more comprehensive list of actors than the
+      // Finnkino API, so we update the event with the actors we get from
+      // the TMDB API.
+      event.actors = actorsWithAvatars;
+      print("Reecived actors");
+    } catch (e) {
+      // We don't need to handle this. If fetching actor avatars
+      // fails, we don't care: the UI just simply won't display
+      // any actor avatars and falls back to placeholder icons
+      // instead.
+    }
+    return event.actors;
+  }
+
+
+
+
+  Future<List<Show>> _updateShowTimes(date) async 
+                                {
+                                  var now = Clock.getCurrentTime();
+                                  date == date ?? now;
+                                  var shows = await _finnkinoApi.getSchedule(defaultTheater, date);
+  
+                                  selectedDate = date;    
+                                  // Return only show times that haven't started yet.
+                                  return shows.where((show) => show.start.isAfter(now)).toList();
+                                }
 
   Future init() async {
     await _bundle.loadString(OtherAssets.preloadedTheaters)

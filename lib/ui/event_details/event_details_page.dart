@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/show.dart';
+import 'package:inkinoRx/model_provider.dart';
 import 'package:inkinoRx/ui/event_details/actor_scroller.dart';
 import 'package:inkinoRx/ui/event_details/event_backdrop_photo.dart';
 import 'package:inkinoRx/ui/event_details/event_details_scroll_effects.dart';
@@ -33,7 +34,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     _scrollController = new ScrollController();
     _scrollController.addListener(_scrollListener);
     _scrollEffects = new EventDetailsScrollEffects();
+
   }
+
+  @override
+  void didChangeDependencies() {
+      super.didChangeDependencies();
+      ModelProvider.of(context).getActorsForEventCommand(widget.event);
+    }
 
   @override
   void dispose() {
