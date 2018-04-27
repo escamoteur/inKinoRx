@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-class MainPageModel {
+class AppModel {
    static const String kDefaultTheaterId = 'default_theater_id';
 
   final AssetBundle _bundle;
@@ -25,7 +25,7 @@ class MainPageModel {
   final FinnkinoApi _finnkinoApi;
   final  TMDBApi _tmdbApi;
 
-  RxCommand<Theater,Theater> changedDefaultTheatherCommand;
+  RxCommand<Theater,Theater> changedCurrentTheatherCommand;
   RxCommand<Null,List<Event>> updateEventsCommand;
   RxCommand<Null,List<Event>> updateUpcomingEventsCommand;
   RxCommand<DateTime,List<Show>> updateShowTimesCommand;
@@ -33,8 +33,9 @@ class MainPageModel {
   RxCommand<String,String> updateSearchStringCommand;
   
   List<Theater> allTheaters;
-  Theater defaultTheater;
+  Theater currentTheater;
 
+  // Days for which we will displays Shows
   List<DateTime> showDates;
   DateTime selectedDate;
 
@@ -44,40 +45,34 @@ class MainPageModel {
     return Observable.combineLatest2<CommandResult<List<Event>>,String,CommandResult<List<Event>>>
                                     (updateEventsCommand, updateSearchStringCommand.results.startWith(""), 
                                         (result, s)
-                                            {
-                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
-                                                                          result.error, result.isExecuting) ;
-                                            });}
+                                            => new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting));}
 
   Observable<CommandResult<List<Event>>> get upcommingEvents {
     return Observable.combineLatest2<CommandResult<List<Event>>,String,CommandResult<List<Event>>>
                                     (updateUpcomingEventsCommand, updateSearchStringCommand.results.startWith(""), 
                                         (result, s)
-                                            {
-                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
-                                                                          result.error, result.isExecuting) ;
-                                            });}
+                                            => new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting));}
 
   Observable<CommandResult<List<Show>>> get showsToDisplay {
     return Observable.combineLatest2<CommandResult<List<Show>>,String,CommandResult<List<Show>>>
                                     (updateShowTimesCommand, updateSearchStringCommand.results.startWith(""), 
                                         (result, s)
-                                            {
-                                                return new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
-                                                                          result.error, result.isExecuting) ;
-                                            });}
+                                            => new CommandResult(result.data.where((event) => event.title.contains(s)).toList(), 
+                                                                          result.error, result.isExecuting));}
 
                                           
 
-  MainPageModel(this._bundle,this._preferences,this._tmdbApi,this._finnkinoApi)
+  AppModel(this._bundle,this._preferences,this._tmdbApi,this._finnkinoApi)
   {
-     changedDefaultTheatherCommand = RxCommand.createSync3<Theater,Theater>((newTheater) => newTheater);
+     changedCurrentTheatherCommand = RxCommand.createSync3<Theater,Theater>((newTheater) => newTheater);
 
      // We handle this by listening to the command and not in the commands function iself 
      // because so others can listen to theater changes too
-     changedDefaultTheatherCommand
+     changedCurrentTheatherCommand
        .results.listen((newDefaultTheater) {
-          defaultTheater = newDefaultTheater;
+          currentTheater = newDefaultTheater;
           updateEventsCommand.execute();
           updateUpcomingEventsCommand.execute();
           updateShowTimesCommand.execute(showDates[0]);
@@ -86,7 +81,7 @@ class MainPageModel {
          
 
     updateEventsCommand = RxCommand.createAsync2<List<Event>>( 
-                                        () async => _finnkinoApi.getNowInTheatersEvents(defaultTheater)); 
+                                        () async => _finnkinoApi.getNowInTheatersEvents(currentTheater),emitLastResult: true); 
 
     updateUpcomingEventsCommand = RxCommand.createAsync2<List<Event>>( 
                                         () async => _finnkinoApi.getUpcomingEvents());                                                                             
@@ -107,7 +102,7 @@ class MainPageModel {
               .then( (theaterXml) => Theater.parseAll(theaterXml))
               .then( (theaters) {
                 allTheaters = theaters;
-                changedDefaultTheatherCommand.execute(_getDefaultTheater(theaters));
+                changedCurrentTheatherCommand.execute(_getDefaultTheater(theaters));
               });
 
     var now = Clock.getCurrentTime();
@@ -146,7 +141,7 @@ class MainPageModel {
                                 {
                                   var now = Clock.getCurrentTime();
                                   date == date ?? now;
-                                  var shows = await _finnkinoApi.getSchedule(defaultTheater, date);
+                                  var shows = await _finnkinoApi.getSchedule(currentTheater, date);
   
                                   selectedDate = date;    
                                   // Return only show times that haven't started yet.

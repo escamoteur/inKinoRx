@@ -1,4 +1,5 @@
-import 'package:inkino/utils/event_name_cleaner.dart';
+
+import 'package:inkinoRx/utils/event_name_cleaner.dart';
 import 'package:test/test.dart';
 
 void main() {

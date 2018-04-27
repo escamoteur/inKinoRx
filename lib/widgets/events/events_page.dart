@@ -34,11 +34,6 @@ class EventsPage extends StatelessWidget {
                                                       snapshot.data.isExecuting ? LoadingStatus.loading : LoadingStatus.success; 
                             
 
-                           // As LoadingView doesn't deal with null data values while loading
-                           if (snapshot.data.data == null)
-                           {
-                             status = LoadingStatus.loading;
-                           }
 
                            return LoadingView(
                               status: status,

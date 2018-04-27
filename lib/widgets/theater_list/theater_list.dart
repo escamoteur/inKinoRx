@@ -27,7 +27,7 @@ class TheaterList extends StatelessWidget {
         }
 
         var theater = model.allTheaters[index - 1];
-        var isSelected = model.defaultTheater.id == theater.id;
+        var isSelected = model.currentTheater.id == theater.id;
         var backgroundColor = isSelected
             ? const Color(0xFFEEEEEE)
             : Theme.of(context).canvasColor;
@@ -36,7 +36,7 @@ class TheaterList extends StatelessWidget {
           color: backgroundColor,
           child: new ListTile(
             onTap: () {
-              model.changedDefaultTheatherCommand(theater);
+              model.changedCurrentTheatherCommand(theater);
               onTheaterTapped();
             },
             selected: isSelected,

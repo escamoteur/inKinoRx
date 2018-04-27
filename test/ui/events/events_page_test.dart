@@ -2,20 +2,23 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:inkino/data/loading_status.dart';
-import 'package:inkino/data/models/actor.dart';
-import 'package:inkino/data/models/event.dart';
-import 'package:inkino/widgets/common/info_message_view.dart';
-import 'package:inkino/widgets/common/loading_view.dart';
-import 'package:inkino/widgets/event_details/event_details_page.dart';
-import 'package:inkino/widgets/events/event_grid.dart';
-import 'package:inkino/widgets/events/events_page.dart';
-import 'package:inkino/widgets/events/events_page_view_model.dart';
+import 'package:inkinoRx/data/actor.dart';
+import 'package:inkinoRx/data/event.dart';
+import 'package:inkinoRx/data/show.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/common/loading_view.dart';
+import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
+import 'package:inkinoRx/widgets/events/event_grid.dart';
+import 'package:inkinoRx/widgets/events/events_page.dart';
 import 'package:mockito/mockito.dart';
+import 'package:rx_command/rx_command.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../test_utils.dart';
 
-class MockEventsPageViewModel extends Mock implements EventsPageViewModel {}
+class MockAppModel extends Mock implements AppModel {}
 
 class NavigatorPushObserver extends NavigatorObserver {
   Route<dynamic> lastPushedRoute;
@@ -43,30 +46,34 @@ void main() {
     ];
 
     NavigatorPushObserver observer;
-    EventsPageViewModel mockViewModel;
+    MockAppModel mockAppModel;
 
     setUp(() {
       io.HttpOverrides.global = new TestHttpOverrides();
 
       observer = new NavigatorPushObserver();
-      mockViewModel = new MockEventsPageViewModel();
-      when(mockViewModel.refreshEvents).thenReturn(() {});
+      mockAppModel = new MockAppModel();
     });
 
     Future<Null> _buildEventsPage(WidgetTester tester) {
-      return tester.pumpWidget(new MaterialApp(
-        home: new EventsPageContent(mockViewModel),
+      final widget = new ModelProvider(
+      model: mockAppModel,
+      child: new MaterialApp(
+        home: new EventsPage(EvenListTypes.InTheater),
         navigatorObservers: <NavigatorObserver>[observer],
       ));
+      return tester.pumpWidget(widget);
     }
 
     testWidgets(
       'when there are no events, should show empty view',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.success);
-        when(mockViewModel.events).thenReturn(<Event>[]);
+        when(mockAppModel.inTheaterEvents).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Event>>>.just(new CommandResult(<Event>[],null,false )));
 
         await _buildEventsPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
+        
 
         expect(find.byKey(EventGrid.emptyViewKey), findsOneWidget);
         expect(find.byKey(EventGrid.contentKey), findsNothing);
@@ -79,10 +86,11 @@ void main() {
     testWidgets(
       'when events exist, should show them',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.success);
-        when(mockViewModel.events).thenReturn(events);
+        when(mockAppModel.inTheaterEvents).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Event>>>.just(new CommandResult(events,null,false )));
 
         await _buildEventsPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
 
         expect(find.byKey(EventGrid.contentKey), findsOneWidget);
         expect(find.byKey(EventGrid.emptyViewKey), findsNothing);
@@ -96,10 +104,11 @@ void main() {
     testWidgets(
       'when tapping on an event poster, should navigate to event details',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.success);
-        when(mockViewModel.events).thenReturn(events);
+        when(mockAppModel.inTheaterEvents).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Event>>>.just(new CommandResult(events,null,false )));
 
         await _buildEventsPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
 
         // Building the events page makes the last pushed route non-null,
         // so we'll reset at this point.
@@ -117,16 +126,24 @@ void main() {
     testWidgets(
       'when clicking "try again" on the error view, should call refreshEvents on the view model',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.error);
-        when(mockViewModel.events).thenReturn(<Event>[]);
+        final command = new MockCommand<Null,List<Event>>();
+
+        when(mockAppModel.updateEventsCommand()).thenAnswer((_)=> command());
+        
+        when(mockAppModel.inTheaterEvents).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Event>>>.just(new CommandResult(null,new Exception(),false )));
 
         await _buildEventsPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
+        await tester.pump();
 
         LoadingViewState state = tester.state(find.byType(LoadingView));
         expect(state.errorContentVisible, isTrue);
 
         await tester.tap(find.byKey(ErrorView.tryAgainButtonKey));
-        verify(mockViewModel.refreshEvents);
+        await tester.pump(); 
+        
+        expect(command.executionCount, 1);
       },
     );
   });

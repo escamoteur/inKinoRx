@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage>
     var horizontalTitleAlignment =
         Platform.isIOS ? CrossAxisAlignment.center : CrossAxisAlignment.start;
 
-      var subtitle = new StreamBuilder<Theater>(stream: ModelProvider.of(context).changedDefaultTheatherCommand.results,
+      var subtitle = new StreamBuilder<Theater>(stream: ModelProvider.of(context).changedCurrentTheatherCommand.results,
                                builder: (BuildContext context, AsyncSnapshot<Theater> currentTheater) 
         {
         return new Text(

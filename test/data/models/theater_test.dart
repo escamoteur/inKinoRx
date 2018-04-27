@@ -1,4 +1,5 @@
-import 'package:inkino/data/models/theater.dart';
+
+import 'package:inkinoRx/data/theater.dart';
 import 'package:test/test.dart';
 
 void main() {

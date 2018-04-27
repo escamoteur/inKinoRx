@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:inkino/widgets/showtimes/showtime_date_selector.dart';
-import 'package:inkino/widgets/showtimes/showtime_page_view_model.dart';
-import 'package:mockito/mockito.dart';
+import 'package:inkinoRx/data/show.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/widgets/showtimes/showtime_date_selector.dart';
 
-class MockShowtimesPageViewModel extends Mock
-    implements ShowtimesPageViewModel {}
+import 'package:mockito/mockito.dart';
+import 'package:rx_command/rx_command.dart';
+
+class MockAppModel extends Mock implements AppModel {}
+
+
+MockAppModel mockAppModel;
 
 void main() {
   group('ShowtimeDateSelector', () {
@@ -14,22 +20,26 @@ void main() {
       new DateTime(2018, 1, 2),
     ];
 
-    MockShowtimesPageViewModel mockViewModel;
+    MockAppModel mockAppModel;
 
     setUp(() {
-      mockViewModel = new MockShowtimesPageViewModel();
+      mockAppModel = new MockAppModel();
     });
 
     Future<Null> _buildDateSelector(WidgetTester tester) {
-      return tester.pumpWidget(new MaterialApp(
-        home: new ShowtimeDateSelector(mockViewModel),
+      final widget = new ModelProvider(
+      model: mockAppModel,
+      child: new MaterialApp(
+        home: new ShowtimeDateSelector(),
       ));
+      return tester.pumpWidget(widget);
+      
     }
 
     testWidgets(
       'when there are dates, should show them in UI',
       (WidgetTester tester) async {
-        when(mockViewModel.dates).thenReturn(dates);
+        when(mockAppModel.showDates).thenReturn(dates);
 
         await _buildDateSelector(tester);
 
@@ -42,18 +52,18 @@ void main() {
     testWidgets(
       'when tapping a date, calls changeCurrentDate on the viewmodel with new date',
       (WidgetTester tester) async {
-        when(mockViewModel.dates).thenReturn(dates);
+       final command = new MockCommand<DateTime,List<Show>>();
+
+        when(mockAppModel.showDates).thenReturn(dates);
+
+        when(mockAppModel.updateShowTimesCommand(typed(any))).thenAnswer((_)=> command(_.positionalArguments[0]));
 
         await _buildDateSelector(tester);
 
         await tester.tap(find.text('Tue'));
 
-        DateTime newDateTime =
-            verify(mockViewModel.changeCurrentDate(typed(captureAny))).captured.single;
+        expect(command.lastPassedValueToExecute, new DateTime(2018, 1,2));
 
-        expect(newDateTime.year, 2018);
-        expect(newDateTime.month, 1);
-        expect(newDateTime.day, 2);
       },
     );
   });

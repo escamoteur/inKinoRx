@@ -1,4 +1,4 @@
-import 'package:inkino/data/models/event.dart';
+import 'package:inkinoRx/data/event.dart';
 import 'package:test/test.dart';
 
 void main() {

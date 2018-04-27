@@ -34,7 +34,7 @@ class ShowtimesPage extends StatelessWidget {
                                     loadingContent: new PlatformAdaptiveProgressIndicator(),
                                     errorContent: new ErrorView(
                                       description: 'Error loading events.',
-                                      onRetry: () => ModelProvider.of(context).updateShowTimesCommand(),
+                                      onRetry: () => ModelProvider.of(context).updateShowTimesCommand(ModelProvider.of(context).selectedDate),
                                     ),
                                     successContent:  snapshot.data.data != null ? new ShowtimeList(snapshot.data.data ?? new List<Show>()) : null,
                                   )

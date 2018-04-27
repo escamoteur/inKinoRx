@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:inkino/data/models/theater.dart';
-import 'package:inkino/widgets/theater_list/theater_list.dart';
-import 'package:inkino/widgets/theater_list/theater_list_view_model.dart';
+import 'package:inkinoRx/data/theater.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/widgets/theater_list/theater_list.dart';
 import 'package:mockito/mockito.dart';
+import 'package:rx_command/rx_command.dart';
 
-class MockTheaterListViewModel extends Mock implements TheaterListViewModel {}
+class MockAppModel extends Mock implements AppModel {}
 
 void main() {
   group('TheaterList', () {
@@ -14,34 +16,36 @@ void main() {
       new Theater(id: '2', name: 'Test Theater #2'),
     ];
 
-    MockTheaterListViewModel mockViewModel;
+    MockAppModel mockAppModel;
     bool theaterTappedCallbackCalled;
 
     setUp(() {
-      mockViewModel = new MockTheaterListViewModel();
-      when(mockViewModel.currentTheater).thenReturn(null);
-      when(mockViewModel.theaters).thenReturn(<Theater>[]);
+      mockAppModel = new MockAppModel();
+      when(mockAppModel.currentTheater).thenReturn(null);
+      when(mockAppModel.allTheaters).thenReturn(<Theater>[]);
 
       theaterTappedCallbackCalled = false;
     });
 
     Future<Null> _buildTheaterList(WidgetTester tester) {
-      return tester.pumpWidget(new MaterialApp(
-        home: new TheaterListContent(
-          header: new Container(),
-          onTheaterTapped: () {
-            theaterTappedCallbackCalled = true;
+      final widget = new ModelProvider(
+      model: mockAppModel,
+      child: new MaterialApp(
+              home: new TheaterList(
+              header: new Container(),
+              onTheaterTapped: () {
+              theaterTappedCallbackCalled = true;
           },
-          viewModel: mockViewModel,
         ),
       ));
+      return tester.pumpWidget(widget);
     }
 
     testWidgets(
       'when theaters exist, should show theam in the UI',
       (WidgetTester tester) async {
-        when(mockViewModel.currentTheater).thenReturn(theaters.first);
-        when(mockViewModel.theaters).thenReturn(theaters);
+        when(mockAppModel.currentTheater).thenReturn(theaters.first);
+        when(mockAppModel.allTheaters).thenReturn(theaters);
 
         await _buildTheaterList(tester);
 
@@ -53,17 +57,18 @@ void main() {
     testWidgets(
       'when theater tapped, should call both changeCurrentTheater and onTheaterTapped',
       (WidgetTester tester) async {
-        when(mockViewModel.currentTheater).thenReturn(theaters.first);
-        when(mockViewModel.theaters).thenReturn(theaters);
+        final command = new MockCommand<Theater,Theater>();
+
+        when(mockAppModel.currentTheater).thenReturn(theaters.first);
+        when(mockAppModel.allTheaters).thenReturn(theaters);
+        when(mockAppModel.changedCurrentTheatherCommand(typed(any))).thenAnswer((_)=> command(_.positionalArguments[0]));
 
         await _buildTheaterList(tester);
 
         await tester.tap(find.text('Test Theater #2'));
 
-        Theater newTheater =
-            verify(mockViewModel.changeCurrentTheater(typed(captureAny)))
-                .captured
-                .first;
+        var newTheater = command.lastPassedValueToExecute;
+
         expect(newTheater.id, '2');
         expect(newTheater.name, 'Test Theater #2');
 

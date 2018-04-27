@@ -1,45 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:inkino/data/loading_status.dart';
-import 'package:inkino/data/models/show.dart';
-import 'package:inkino/widgets/common/info_message_view.dart';
-import 'package:inkino/widgets/common/loading_view.dart';
-import 'package:inkino/widgets/showtimes/showtime_list.dart';
-import 'package:inkino/widgets/showtimes/showtime_page_view_model.dart';
-import 'package:inkino/widgets/showtimes/showtimes_page.dart';
+import 'package:inkinoRx/data/show.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/common/loading_view.dart';
+import 'package:inkinoRx/widgets/showtimes/showtime_list.dart';
+import 'package:inkinoRx/widgets/showtimes/showtimes_page.dart';
 import 'package:mockito/mockito.dart';
+import 'package:rx_command/rx_command.dart';
+import 'package:rxdart/rxdart.dart';
 
-class MockShowtimesPageViewModel extends Mock
-    implements ShowtimesPageViewModel {}
+class MockAppModel extends Mock implements AppModel {}
+
 
 void main() {
   group('ShowtimesPage', () {
-    MockShowtimesPageViewModel mockViewModel;
+    MockAppModel mockAppModel;
+
 
     setUp(() {
-      mockViewModel = new MockShowtimesPageViewModel();
-      when(mockViewModel.status).thenReturn(LoadingStatus.loading);
-      when(mockViewModel.dates).thenReturn(<DateTime>[]);
-      when(mockViewModel.selectedDate).thenReturn(new DateTime(2018));
-      when(mockViewModel.shows).thenReturn(<Show>[]);
-      when(mockViewModel.refreshShowtimes).thenReturn(() {});
+      mockAppModel = new MockAppModel();
+      when(mockAppModel.showDates).thenReturn(<DateTime>[]);
+      when(mockAppModel.selectedDate).thenReturn(new DateTime(2018));
+      when(mockAppModel.showsToDisplay).thenReturn(<Show>[]);
     });
 
     Future<Null> _buildShowtimesPage(WidgetTester tester) {
-      return tester.pumpWidget(
-        new MaterialApp(
-          home: new ShowtimesPageContent(mockViewModel),
-        ),
-      );
+      final widget = new ModelProvider(
+      model: mockAppModel,
+      child: new MaterialApp(
+              home: new ShowtimesPage()
+      ));
+      return tester.pumpWidget(widget);
     }
 
     testWidgets(
       'when there are no shows, should show empty view',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.success);
-        when(mockViewModel.shows).thenReturn(<Show>[]);
+        
+        when(mockAppModel.showsToDisplay).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Show>>>.just(new CommandResult(<Show>[],null,false )));
 
         await _buildShowtimesPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
 
         expect(find.byKey(ShowtimeList.emptyViewKey), findsOneWidget);
         expect(find.byKey(ShowtimeList.contentKey), findsNothing);
@@ -51,18 +55,23 @@ void main() {
 
     testWidgets('when shows exist, should show them',
         (WidgetTester tester) async {
-      when(mockViewModel.status).thenReturn(LoadingStatus.success);
-      when(mockViewModel.shows).thenReturn(<Show>[
-        new Show(
-          title: 'Show title',
-          theaterAndAuditorium: 'Auditorium One',
-          presentationMethod: '2D',
-          start: new DateTime(2018),
-          end: new DateTime(2018),
-        ),
-      ]);
+
+        when(mockAppModel.showsToDisplay).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Show>>>.just(
+              new CommandResult(<Show>[
+                new Show(
+                          title: 'Show title',
+                          theaterAndAuditorium: 'Auditorium One',
+                          presentationMethod: '2D',
+                          start: new DateTime(2018),
+                          end: new DateTime(2018),
+                        ),
+                ],
+                null,false )));
+          
 
       await _buildShowtimesPage(tester);
+      await tester.pump(); // because of the Streambuilder we have to pump once more
 
       expect(find.byKey(ShowtimeList.contentKey), findsOneWidget);
       expect(find.byKey(ShowtimeList.emptyViewKey), findsNothing);
@@ -75,15 +84,26 @@ void main() {
     testWidgets(
       'when clicking "try again" on the error view, should call refreshShowtimes on the view model',
       (WidgetTester tester) async {
-        when(mockViewModel.status).thenReturn(LoadingStatus.error);
+
+        final command = new MockCommand<DateTime,List<Show>>();
+
+        when(mockAppModel.updateShowTimesCommand(typed(any))).thenAnswer((_)=> command(_.positionalArguments[0]));
+
+
+        when(mockAppModel.showsToDisplay).thenAnswer((_)=> 
+            new Observable<CommandResult<List<Show>>>.just(new CommandResult(<Show>[],new Exception(),false )));
 
         await _buildShowtimesPage(tester);
+        await tester.pump(); // because of the Streambuilder we have to pump once more
 
         LoadingViewState state = tester.state(find.byType(LoadingView));
         expect(state.errorContentVisible, isTrue);
 
         await tester.tap(find.byKey(ErrorView.tryAgainButtonKey));
-        verify(mockViewModel.refreshShowtimes);
+        await tester.pump(); 
+
+        expect(command.executionCount, 1);
+        expect(command.lastPassedValueToExecute, new DateTime(2018));
       },
     );
   });
