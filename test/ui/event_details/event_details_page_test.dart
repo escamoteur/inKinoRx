@@ -5,13 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:inkino/data/models/actor.dart';
 import 'package:inkino/data/models/event.dart';
 import 'package:inkino/data/models/show.dart';
-import 'package:inkino/ui/event_details/event_details_page.dart'
+import 'package:inkino/widgets/event_details/event_details_page.dart'
     as eventDetails;
-import 'package:inkino/ui/event_details/showtime_information.dart';
-import 'package:inkino/ui/event_details/showtime_information.dart'
+import 'package:inkino/widgets/event_details/showtime_information.dart';
+import 'package:inkino/widgets/event_details/showtime_information.dart'
     as showtimeInfo;
-import 'package:inkino/ui/events/event_poster.dart';
-import 'package:inkino/ui/events/event_poster.dart' as eventPoster;
+import 'package:inkino/widgets/events/event_poster.dart';
+import 'package:inkino/widgets/events/event_poster.dart' as eventPoster;
 import 'package:meta/meta.dart';
 
 import '../../test_utils.dart';

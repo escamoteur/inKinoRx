@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 
-import 'package:inkinoRx/ui/common/info_message_view.dart';
-import 'package:inkinoRx/ui/event_details/event_details_page.dart';
-import 'package:inkinoRx/ui/events/event_grid_item.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
+import 'package:inkinoRx/widgets/events/event_grid_item.dart';
 import 'package:meta/meta.dart';
 
 class EventGrid extends StatelessWidget {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:inkinoRx/mainpage/main_page_model.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
 import 'package:inkinoRx/model_provider.dart';
 import 'package:intl/intl.dart';
 
 class ShowtimeDateSelector extends StatelessWidget {
   ShowtimeDateSelector();
 
-  Widget _buildDateItem(DateTime date, MainPageModel model) {
+  Widget _buildDateItem(DateTime date, AppModel model) {
     var color = model.selectedDate == date ? Colors.white : Colors.white.withOpacity(0.4);
 
     var content = new Column(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:inkino/data/models/theater.dart';
-import 'package:inkino/ui/theater_list/theater_list.dart';
-import 'package:inkino/ui/theater_list/theater_list_view_model.dart';
+import 'package:inkino/widgets/theater_list/theater_list.dart';
+import 'package:inkino/widgets/theater_list/theater_list_view_model.dart';
 import 'package:mockito/mockito.dart';
 
 class MockTheaterListViewModel extends Mock implements TheaterListViewModel {}

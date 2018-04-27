@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/theater.dart';
 import 'package:inkinoRx/model_provider.dart';
-import 'package:inkinoRx/ui/events/events_page.dart';
-import 'package:inkinoRx/ui/showtimes/showtimes_page.dart';
-import 'package:inkinoRx/ui/theater_list/inkino_drawer_header.dart';
-import 'package:inkinoRx/ui/theater_list/theater_list.dart';
+import 'package:inkinoRx/widgets/events/events_page.dart';
+import 'package:inkinoRx/widgets/showtimes/showtimes_page.dart';
+import 'package:inkinoRx/widgets/theater_list/inkino_drawer_header.dart';
+import 'package:inkinoRx/widgets/theater_list/theater_list.dart';
 
 
 class MainPage extends StatefulWidget {

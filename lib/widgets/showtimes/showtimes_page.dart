@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/loading_status.dart';
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/model_provider.dart';
-import 'package:inkinoRx/ui/common/info_message_view.dart';
-import 'package:inkinoRx/ui/common/loading_view.dart';
-import 'package:inkinoRx/ui/common/platform_adaptive_progress_indicator.dart';
-import 'package:inkinoRx/ui/showtimes/showtime_date_selector.dart';
-import 'package:inkinoRx/ui/showtimes/showtime_list.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/common/loading_view.dart';
+import 'package:inkinoRx/widgets/common/platform_adaptive_progress_indicator.dart';
+import 'package:inkinoRx/widgets/showtimes/showtime_date_selector.dart';
+import 'package:inkinoRx/widgets/showtimes/showtime_list.dart';
 
 import 'package:rx_command/rx_command.dart';
 

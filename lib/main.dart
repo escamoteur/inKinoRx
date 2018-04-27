@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inkinoRx/mainpage/main_page.dart';
-import 'package:inkinoRx/mainpage/main_page_model.dart';
+import 'package:inkinoRx/mainpage/app_model.dart';
 
 import 'package:inkinoRx/model_provider.dart';
 import 'package:inkinoRx/services/finnkino_api.dart';
@@ -19,7 +19,7 @@ Future<Null> main() async {
   var finnkinoApi = new FinnkinoApi();
   var prefs = await SharedPreferences.getInstance();
 
-  MainPageModel mainPageModel = new MainPageModel(rootBundle,prefs, tmdbApi,finnkinoApi);
+  AppModel mainPageModel = new AppModel(rootBundle,prefs, tmdbApi,finnkinoApi);
   await mainPageModel.init();
 
   runApp(new InKinoApp( model: mainPageModel,));
@@ -27,7 +27,7 @@ Future<Null> main() async {
 
 class InKinoApp extends StatelessWidget {
 
-  final MainPageModel model;
+  final AppModel model;
 
   const InKinoApp({Key key, this.model}) : super(key: key);
 

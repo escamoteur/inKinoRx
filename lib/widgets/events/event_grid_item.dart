@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
-import 'package:inkinoRx/ui/events/event_poster.dart';
+import 'package:inkinoRx/widgets/events/event_poster.dart';
 import 'package:meta/meta.dart';
 
 class EventGridItem extends StatelessWidget {

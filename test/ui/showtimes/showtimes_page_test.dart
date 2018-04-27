@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:inkino/data/loading_status.dart';
 import 'package:inkino/data/models/show.dart';
-import 'package:inkino/ui/common/info_message_view.dart';
-import 'package:inkino/ui/common/loading_view.dart';
-import 'package:inkino/ui/showtimes/showtime_list.dart';
-import 'package:inkino/ui/showtimes/showtime_page_view_model.dart';
-import 'package:inkino/ui/showtimes/showtimes_page.dart';
+import 'package:inkino/widgets/common/info_message_view.dart';
+import 'package:inkino/widgets/common/loading_view.dart';
+import 'package:inkino/widgets/showtimes/showtime_list.dart';
+import 'package:inkino/widgets/showtimes/showtime_page_view_model.dart';
+import 'package:inkino/widgets/showtimes/showtimes_page.dart';
 import 'package:mockito/mockito.dart';
 
 class MockShowtimesPageViewModel extends Mock

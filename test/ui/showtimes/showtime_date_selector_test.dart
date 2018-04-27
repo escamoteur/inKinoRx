@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:inkino/ui/showtimes/showtime_date_selector.dart';
-import 'package:inkino/ui/showtimes/showtime_page_view_model.dart';
+import 'package:inkino/widgets/showtimes/showtime_date_selector.dart';
+import 'package:inkino/widgets/showtimes/showtime_page_view_model.dart';
 import 'package:mockito/mockito.dart';
 
 class MockShowtimesPageViewModel extends Mock

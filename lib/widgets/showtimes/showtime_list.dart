@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/show.dart';
-import 'package:inkinoRx/ui/common/info_message_view.dart';
-import 'package:inkinoRx/ui/showtimes/showtime_list_tile.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/showtimes/showtime_list_tile.dart';
 
 
 class ShowtimeList extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/model_provider.dart';
-import 'package:inkinoRx/ui/event_details/event_details_page.dart';
+import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
 
 import 'package:intl/intl.dart';
 

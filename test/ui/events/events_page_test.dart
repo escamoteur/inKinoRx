@@ -5,12 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:inkino/data/loading_status.dart';
 import 'package:inkino/data/models/actor.dart';
 import 'package:inkino/data/models/event.dart';
-import 'package:inkino/ui/common/info_message_view.dart';
-import 'package:inkino/ui/common/loading_view.dart';
-import 'package:inkino/ui/event_details/event_details_page.dart';
-import 'package:inkino/ui/events/event_grid.dart';
-import 'package:inkino/ui/events/events_page.dart';
-import 'package:inkino/ui/events/events_page_view_model.dart';
+import 'package:inkino/widgets/common/info_message_view.dart';
+import 'package:inkino/widgets/common/loading_view.dart';
+import 'package:inkino/widgets/event_details/event_details_page.dart';
+import 'package:inkino/widgets/events/event_grid.dart';
+import 'package:inkino/widgets/events/events_page.dart';
+import 'package:inkino/widgets/events/events_page_view_model.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../test_utils.dart';

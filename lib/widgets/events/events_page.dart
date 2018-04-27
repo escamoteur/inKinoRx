@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/loading_status.dart';
 import 'package:inkinoRx/model_provider.dart';
-import 'package:inkinoRx/ui/common/info_message_view.dart';
-import 'package:inkinoRx/ui/common/loading_view.dart';
-import 'package:inkinoRx/ui/common/platform_adaptive_progress_indicator.dart';
-import 'package:inkinoRx/ui/events/event_grid.dart';
+import 'package:inkinoRx/widgets/common/info_message_view.dart';
+import 'package:inkinoRx/widgets/common/loading_view.dart';
+import 'package:inkinoRx/widgets/common/platform_adaptive_progress_indicator.dart';
+import 'package:inkinoRx/widgets/events/event_grid.dart';
 import 'package:rx_command/rx_command.dart';
 
 typedef StreamProvider = Stream<CommandResult<List<Event>>> Function();
