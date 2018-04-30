@@ -7,6 +7,7 @@ import 'package:inkinoRx/mainpage/app_model.dart';
 
 import 'package:inkinoRx/model_provider.dart';
 import 'package:inkinoRx/services/finnkino_api.dart';
+import 'package:inkinoRx/services/preferences.dart';
 import 'package:inkinoRx/services/tmdb_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +18,7 @@ Future<Null> main() async {
 
   var tmdbApi = new TMDBApi();
   var finnkinoApi = new FinnkinoApi();
-  var prefs = await SharedPreferences.getInstance();
+  var prefs = new Preferences(await SharedPreferences.getInstance());
 
   AppModel mainPageModel = new AppModel(rootBundle,prefs, tmdbApi,finnkinoApi);
   await mainPageModel.init();

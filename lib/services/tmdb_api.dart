@@ -77,4 +77,29 @@ class TMDBApi {
 
     return actorsWithAvatars;
   }
+
+  Future<List<Actor>> getActorsForEvent(event) async { 
+  
+    print("getactors called");
+    try {
+      var actorsWithAvatars = await findAvatarsForActors(
+        event,
+        event.actors,
+      );
+  
+      // TMDB API might have a more comprehensive list of actors than the
+      // Finnkino API, so we update the event with the actors we get from
+      // the TMDB API.
+      event.actors = actorsWithAvatars;
+      print("Reecived actors");
+    } catch (e) {
+      // We don't need to handle this. If fetching actor avatars
+      // fails, we don't care: the UI just simply won't display
+      // any actor avatars and falls back to placeholder icons
+      // instead.
+    }
+    return event.actors;
+  }
+
+
 }

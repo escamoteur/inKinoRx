@@ -24,8 +24,12 @@ class EventsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var model = ModelProvider.of(context);
 
-    Stream<CommandResult<List<Event>>> stream = listType == EvenListTypes.InTheater ? model.inTheaterEvents : model.upcommingEvents;
-    return StreamBuilder(stream: stream,
+    var events = (listType == EvenListTypes.InTheater) ? model.inTheaterEvents : model.upcommingEvents;
+
+    var lastEventList = (listType == EvenListTypes.InTheater) ? model.updateEventsCommand.lastResult : model.updateUpcomingEventsCommand.lastResult;                    
+
+    return StreamBuilder(stream: events,
+                        initialData: new CommandResult(lastEventList, null,false),
                         builder: (BuildContext context, AsyncSnapshot<CommandResult<List<Event>>> snapshot)
                         {
                            if (snapshot.hasData)

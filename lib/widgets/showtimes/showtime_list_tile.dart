@@ -18,7 +18,7 @@ class ShowtimeListTile extends StatelessWidget {
   final bool useAlternateBackground;
 
   void _navigateToEventDetails(BuildContext context) {
-      var event =  ModelProvider.of(context).getEventForShow(show);
+      var event =  ModelProvider.of(context).updateEventsCommand.lastResult?.where( (event) => event.id == show.eventId)?.first;
       if (event != null)
        {
           Navigator.push(
