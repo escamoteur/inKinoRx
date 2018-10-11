@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:inkinoRx/data/show.dart';
-import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/app/app_model.dart';
 import 'package:inkinoRx/model_provider.dart';
 import 'package:inkinoRx/widgets/common/info_message_view.dart';
 import 'package:inkinoRx/widgets/common/loading_view.dart';
@@ -11,7 +11,7 @@ import 'package:mockito/mockito.dart';
 import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 
-class MockAppModel extends Mock implements AppModel {}
+class MockAppModel extends Mock implements AppManager {}
 
 
 void main() {
@@ -23,7 +23,7 @@ void main() {
       mockAppModel = new MockAppModel();
       when(mockAppModel.showDates).thenReturn(<DateTime>[]);
       when(mockAppModel.selectedDate).thenReturn(new DateTime(2018));
-      when(mockAppModel.showsToDisplay).thenReturn(<Show>[]);
+      when(mockAppModel.showsToDisplay).thenAnswer((_) => <Show>[]);
     });
 
     Future<Null> _buildShowtimesPage(WidgetTester tester) {

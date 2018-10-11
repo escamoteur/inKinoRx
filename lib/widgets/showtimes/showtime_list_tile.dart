@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:inkinoRx/data/show.dart';
-import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/managers/app_manager.dart';
 import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
-
+import 'package:inkinoRx/service_locator.dart';
 import 'package:intl/intl.dart';
 
 class ShowtimeListTile extends StatelessWidget {
@@ -18,7 +18,7 @@ class ShowtimeListTile extends StatelessWidget {
   final bool useAlternateBackground;
 
   void _navigateToEventDetails(BuildContext context) {
-      var event =  ModelProvider.of(context).updateEventsCommand.lastResult?.where( (event) => event.id == show.eventId)?.first;
+      var event =  sl.get<AppManager>().updateEventsCommand.lastResult?.where( (event) => event.id == show.eventId)?.first;
       if (event != null)
        {
           Navigator.push(

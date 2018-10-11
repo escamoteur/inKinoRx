@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:inkinoRx/data/actor.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/show.dart';
-import 'package:inkinoRx/mainpage/app_model.dart';
+import 'package:inkinoRx/app/app_model.dart';
 import 'package:inkinoRx/model_provider.dart';
 import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
 import 'package:inkinoRx/widgets/event_details/showtime_information.dart';
@@ -17,7 +17,7 @@ import 'package:mockito/mockito.dart';
 import '../../test_utils.dart';
 
 
-class MockAppModel extends Mock implements AppModel {}
+class MockAppModel extends Mock implements AppManager {}
 
 
 void main() {

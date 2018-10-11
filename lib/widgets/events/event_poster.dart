@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/assets.dart';
 import 'package:inkinoRx/data/event.dart';
-import 'package:inkinoRx/utils/widget_utils.dart';
+import 'package:inkinoRx/helpers/widget_utils.dart';
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 

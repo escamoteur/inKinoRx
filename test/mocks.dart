@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MockFile extends Mock implements File {}
 
-class MockFinnkinoApi extends Mock implements FinnkinoApi {}
+class MockFinnkinoApi extends Mock implements FinnkinoService {}
 class MockAssetBundle extends Mock implements AssetBundle {}
 
 class MockPreferences extends Mock implements SharedPreferences {}

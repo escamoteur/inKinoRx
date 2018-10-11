@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/loading_status.dart';
-import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/managers/app_manager.dart';
+import 'package:inkinoRx/service_locator.dart';
 import 'package:inkinoRx/widgets/common/info_message_view.dart';
 import 'package:inkinoRx/widgets/common/loading_view.dart';
 import 'package:inkinoRx/widgets/common/platform_adaptive_progress_indicator.dart';
@@ -13,7 +14,7 @@ import 'package:rx_command/rx_command.dart';
 
 typedef StreamProvider = Stream<CommandResult<List<Event>>> Function();
 
-enum EvenListTypes {InTheater, Upcomming}
+enum EvenListTypes { InTheater, Upcomming }
 
 class EventsPage extends StatelessWidget {
   final EvenListTypes listType;
@@ -22,44 +23,44 @@ class EventsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = ModelProvider.of(context);
+    var appManager = sl.get<AppManager>();
 
-    var events = (listType == EvenListTypes.InTheater) ? model.inTheaterEvents : model.upcommingEvents;
+    var events = (listType == EvenListTypes.InTheater)
+        ? appManager.inTheaterEvents
+        : appManager.upcommingEvents;
 
-    var lastEventList = (listType == EvenListTypes.InTheater) ? model.updateEventsCommand.lastResult : model.updateUpcomingEventsCommand.lastResult;                    
+    var lastEventList = (listType == EvenListTypes.InTheater)
+        ? appManager.updateEventsCommand.lastResult
+        : appManager.updateUpcomingEventsCommand.lastResult;
 
-    return StreamBuilder(stream: events,
-                        initialData: new CommandResult(lastEventList, null,false),
-                        builder: (BuildContext context, AsyncSnapshot<CommandResult<List<Event>>> snapshot)
-                        {
-                           if (snapshot.hasData)
-                           {
-                            LoadingStatus status = snapshot.hasError || snapshot.data.hasError ? LoadingStatus.error : 
-                                                      snapshot.data.isExecuting ? LoadingStatus.loading : LoadingStatus.success; 
-                            
+    return StreamBuilder(
+        stream: events,
+        initialData: new CommandResult(lastEventList, null, false),
+        builder: (BuildContext context,
+            AsyncSnapshot<CommandResult<List<Event>>> snapshot) {
+          if (snapshot.hasData) {
+            LoadingStatus status = snapshot.hasError || snapshot.data.hasError
+                ? LoadingStatus.error
+                : snapshot.data.isExecuting
+                    ? LoadingStatus.loading
+                    : LoadingStatus.success;
 
-
-                           return LoadingView(
-                              status: status,
-                              loadingContent: new PlatformAdaptiveProgressIndicator(),
-                              errorContent: new ErrorView(
-                                description: 'Error loading events.',
-                                onRetry: () =>ModelProvider.of(context).updateEventsCommand(),
-                              ),
-                              successContent: new EventGrid(
-                                // As LoadingView doesn't deal with null data values while loading
-                                events:   snapshot.data.data ?? new List<Event>(), 
-                                onReloadCallback: () =>ModelProvider.of(context).updateEventsCommand(),
-                              ),
-                            );
-                           }
-                           else
-                           {
-                             return Container();
-                           }
-                        });
-
-
-
+            return LoadingView(
+              status: status,
+              loadingContent: new PlatformAdaptiveProgressIndicator(),
+              errorContent: new ErrorView(
+                description: 'Error loading events.',
+                onRetry: () => appManager.updateEventsCommand(),
+              ),
+              successContent: new EventGrid(
+                // As LoadingView doesn't deal with null data values while loading
+                events: snapshot.data.data ?? new List<Event>(),
+                onReloadCallback: () => appManager.updateEventsCommand(),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 }

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:inkinoRx/assets.dart';
 import 'package:inkinoRx/data/actor.dart';
 import 'package:inkinoRx/data/event.dart';
-import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/managers/app_manager.dart';
+import 'package:inkinoRx/service_locator.dart';
 
 
 class ActorScroller extends StatelessWidget {
@@ -15,8 +16,8 @@ class ActorScroller extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return 
-    new StreamBuilder(initialData: event.actors, stream: ModelProvider.of(context).getActorsForEventCommand.results,
-        builder: (context, AsyncSnapshot<List<Actor>> snapshot){
+    new StreamBuilder<List<Actor>>(initialData: event.actors, stream: sl.get<AppManager>().getActorsForEventCommand,
+        builder: (context, snapshot){
         var actors = snapshot.hasData && (snapshot.data != null) ? snapshot.data : new List<Actor>(); // just to be save
 
     return Container(

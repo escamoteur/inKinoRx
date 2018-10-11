@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/theater.dart';
-import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/managers/app_manager.dart';
+import 'package:inkinoRx/service_locator.dart';
 import 'package:inkinoRx/widgets/events/events_page.dart';
 import 'package:inkinoRx/widgets/showtimes/showtimes_page.dart';
 import 'package:inkinoRx/widgets/theater_list/inkino_drawer_header.dart';
@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage>
     var horizontalTitleAlignment =
         Platform.isIOS ? CrossAxisAlignment.center : CrossAxisAlignment.start;
 
-      var subtitle = new StreamBuilder<Theater>(stream: ModelProvider.of(context).changedCurrentTheatherCommand.results,
+      var subtitle = new StreamBuilder<Theater>(stream: sl.get<AppManager>().changedCurrentTheatherCommand,
                                builder: (BuildContext context, AsyncSnapshot<Theater> currentTheater) 
         {
         return new Text(
@@ -106,7 +106,7 @@ class _MainPageState extends State<MainPage>
   }
 
   void _updateSearchQuery(String newQuery) {
-      ModelProvider.of(context).updateSearchStringCommand(newQuery);    
+      sl.get<AppManager>().updateSearchStringCommand(newQuery);    
   }
 
   List<Widget> _buildActions() {

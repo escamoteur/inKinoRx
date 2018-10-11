@@ -12,7 +12,23 @@ import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/services/http_utils.dart';
 
 
-class TMDBApi {
+abstract class TMDBApiService {
+
+  Future<List<Actor>> findAvatarsForActors(
+      Event event, List<Actor> actors);
+
+  Future<int> _findMovieId(String movieTitle);
+
+  Future<List<Actor>> _getActorAvatars(int movieId);
+
+  List<Actor> _parseActorAvatars(List<Map<String, dynamic>> movieCast);
+
+  Future<List<Actor>> getActorsForEvent(event);
+
+
+}
+
+class TMDBApiServiceImplementation implements TMDBApiService {
   static final String baseUrl = 'api.themoviedb.org';
 
   Future<List<Actor>> findAvatarsForActors(

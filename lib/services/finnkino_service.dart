@@ -5,10 +5,21 @@ import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/data/theater.dart';
 import 'package:inkinoRx/services/http_utils.dart';
-import 'package:inkinoRx/utils/clock.dart';
+import 'package:inkinoRx/helpers/clock.dart';
 import 'package:intl/intl.dart';
 
-class FinnkinoApi {
+abstract class FinnKinoService {
+
+  Future<List<Show>> _getSchedule(Theater theater, DateTime date);
+
+  Future<List<Event>> getNowInTheatersEvents(Theater theater);
+
+  Future<List<Event>> getUpcomingEvents();
+
+  Future<List<Show>> getShows(date, Theater theater);
+}
+
+class FinnKinoServiceImplementation implements FinnKinoService {
   static final DateFormat ddMMyyyy = new DateFormat('dd.MM.yyyy');
 
   static final Uri kScheduleBaseUrl =
@@ -16,6 +27,7 @@ class FinnkinoApi {
   static final Uri kEventsBaseUrl =
       new Uri.https('www.finnkino.fi', '/en/xml/Events');
 
+  @override
   Future<List<Show>> _getSchedule(Theater theater, DateTime date) async {
     var dt = ddMMyyyy.format(date ?? new DateTime.now());
     var response = await getRequest(
@@ -28,6 +40,7 @@ class FinnkinoApi {
     return Show.parseAll(response);
   }
 
+  @override
   Future<List<Event>> getNowInTheatersEvents(Theater theater) async {
     var response = await getRequest(
       kEventsBaseUrl.replace(queryParameters: {
@@ -39,6 +52,7 @@ class FinnkinoApi {
     return Event.parseAll(response);
   }
 
+  @override
   Future<List<Event>> getUpcomingEvents() async {
     var response = await getRequest(
       kEventsBaseUrl.replace(queryParameters: {
@@ -49,6 +63,7 @@ class FinnkinoApi {
     return Event.parseAll(response);
   }
 
+  @override
   Future<List<Show>> getShows(date, Theater theater) async 
                                 {
                                   var now = Clock.getCurrentTime();

@@ -1,7 +1,7 @@
 
 import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/services/xml_utils.dart';
-import 'package:inkinoRx/utils/event_name_cleaner.dart';
+import 'package:inkinoRx/helpers/event_name_cleaner.dart';
 import 'package:xml/xml.dart' as xml;
 
 class Show {

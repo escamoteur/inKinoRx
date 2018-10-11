@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:inkinoRx/mainpage/app_model.dart';
-import 'package:inkinoRx/model_provider.dart';
+import 'package:inkinoRx/managers/app_manager.dart';
+import 'package:inkinoRx/service_locator.dart';
 import 'package:intl/intl.dart';
 
 class ShowtimeDateSelector extends StatelessWidget {
   ShowtimeDateSelector();
 
-  Widget _buildDateItem(DateTime date, AppModel model) {
-    var color = model.selectedDate == date ? Colors.white : Colors.white.withOpacity(0.4);
+  Widget _buildDateItem(DateTime date, AppManager appManager) {
+    var color = appManager.selectedDate == date
+        ? Colors.white
+        : Colors.white.withOpacity(0.4);
 
     var content = new Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -36,7 +38,7 @@ class ShowtimeDateSelector extends StatelessWidget {
     return new Material(
       color: Colors.transparent,
       child: new InkWell(
-        onTap: () => model.updateShowTimesCommand(date),
+        onTap: () => appManager.updateShowTimesCommand(date),
         radius: 56.0,
         child: new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -48,16 +50,16 @@ class ShowtimeDateSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = ModelProvider.of(context);
+    var appManager = sl.get<AppManager>();
     return new Container(
       height: 56.0 + MediaQuery.of(context).padding.bottom,
       color: const Color(0xFF222222),
       child: new ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: model.showDates.length,
+        itemCount: appManager.showDates.length,
         itemBuilder: (BuildContext context, int index) {
-          var date = model.showDates[index];
-          return _buildDateItem(date, model );
+          var date = appManager.showDates[index];
+          return _buildDateItem(date, appManager);
         },
       ),
     );

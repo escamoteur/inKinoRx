@@ -4,20 +4,20 @@ description: A new Flutter application.
 dependencies:
   flutter:
     sdk: flutter
-  rxdart: ^0.16.7
-  xml: ^3.0.0
-  flutter_redux: ^0.5.0
-  intl: ^0.15.2
-  url_launcher: ^3.0.0
-  path_provider: ^0.4.0
-  shared_preferences: ^0.4.0
-  rx_command: ^1.1.0
-  rx_widgets: ^1.0.3
+  rxdart: any
+  xml: any
+  intl: any
+  url_launcher: any
+  path_provider: any
+  shared_preferences: any
+  rx_command: 4.0.0
+  rx_widgets: any
+  get_it: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^2.2.3
+  mockito: any
 
 flutter:
   uses-material-design: true
