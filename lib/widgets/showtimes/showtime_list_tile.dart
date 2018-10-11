@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/managers/app_manager.dart';
-import 'package:inkinoRx/widgets/event_details/event_details_page.dart';
+import 'package:inkinoRx/app/event_details/event_details_page.dart';
 import 'package:inkinoRx/service_locator.dart';
 import 'package:intl/intl.dart';
 

@@ -3,11 +3,11 @@ import 'package:inkinoRx/data/event.dart';
 import 'package:inkinoRx/data/show.dart';
 import 'package:inkinoRx/managers/app_manager.dart';
 import 'package:inkinoRx/service_locator.dart';
-import 'package:inkinoRx/widgets/event_details/actor_scroller.dart';
-import 'package:inkinoRx/widgets/event_details/event_backdrop_photo.dart';
-import 'package:inkinoRx/widgets/event_details/event_details_scroll_effects.dart';
-import 'package:inkinoRx/widgets/event_details/showtime_information.dart';
-import 'package:inkinoRx/widgets/event_details/storyline_widget.dart';
+import 'package:inkinoRx/app/event_details/actor_scroller.dart';
+import 'package:inkinoRx/app/event_details/event_backdrop_photo.dart';
+import 'package:inkinoRx/app/event_details/event_details_scroll_effects.dart';
+import 'package:inkinoRx/app/event_details/showtime_information.dart';
+import 'package:inkinoRx/app/event_details/storyline_widget.dart';
 import 'package:inkinoRx/widgets/events/event_poster.dart';
 import 'package:inkinoRx/helpers/widget_utils.dart';
 
