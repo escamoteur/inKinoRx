@@ -67,7 +67,7 @@ class AppManagerImplementation implements AppManager {
   DateTime selectedDate;
 
   /// The following is a bit of Rx magic ;-)  this three getters create Observables that will issue
-  /// a new item either when the context of the search field changes OR if the Commands produce new data
+  /// a new item either when the content of the search field changes OR if the Commands produce new data
 
   // because Streams in Dart can only be single listened and Streambuilder always subscribe new, we have to create a new instance everytime
   // which is only possible by using a function call or getter.
@@ -77,7 +77,7 @@ class AppManagerImplementation implements AppManager {
             CommandResult<List<Event>>>(
         updateEventsCommand.results,
         updateSearchStringCommand.startWith(""),
-        (result, s) => new CommandResult(
+        (result, s) => new CommandResult<List<Event>>(
             result.data != null
                 ? result.data
                     .where((event) => event.title.contains(s))
@@ -150,7 +150,7 @@ class AppManagerImplementation implements AppManager {
 
     updateSearchStringCommand = RxCommand.createSync((s) => s);
 
-    //updateEventsCommand.listen((data) => print("Has data: ${data.hasData}  has error:   ${data.hasError}, ${data.isExecuting}"));
+    updateEventsCommand.results.listen((data) => print("Has data: ${data.hasData}  has error:   ${data.hasError}, ${data.isExecuting}"));
   }
 
   Future init() async {
